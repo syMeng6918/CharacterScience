@@ -161,7 +161,7 @@ train_sampler = WeightedRandomSampler(train_weights, len(train_weights))
 train_loader = DataLoader(train_dataset, batch_size=args.batch_size, sampler=train_sampler, num_workers=4)
 test_loader = DataLoader(test_dataset, batch_size=args.batch_size, num_workers=4)
 
-print(f"训练集标签分布: {counts}")
+print(f"Train label Distripution: {counts}")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -171,7 +171,7 @@ if args.loss == 'asl':
 elif args.loss == 'bce':
     #pos_weight = torch.tensor([counts[0] / counts[1]]).to(device)
     pos_weight = torch.tensor([train_counts[0] / train_counts[1]]).to(device)
-    print(f"🔢 正样本: {train_counts[1]}, 负样本: {train_counts[0]}, pos_weight: {pos_weight.item():.4f}")
+    print(f"🔢 Positive sample: {train_counts[1]}, Negative Sample: {train_counts[0]}, pos_weight: {pos_weight.item():.4f}")
     criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 else:
     criterion = FocalLoss()
@@ -238,13 +238,13 @@ for epoch in range(1, args.epochs + 1):
                     font_stats[fname]['pred1'] += 1
                 else:
                     font_stats[fname]['pred0'] += 1
-            # 保存拼图图像（注意只适用于 batch_size = 1 或逐个保存）
+            # save combined images（just for batch_size = 1）
             '''for img_tensor, fontname in zip(images, font_names):
                 fname = os.path.basename(fontname)
                 save_path = os.path.join("checkpoints/val_images", f"{fname}_epoch{epoch}.png")
                 os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
-                # 确保是 [3,H,W] 的 tensor，并转为 PIL 保存
+                # ensure [3,H,W] tensor，and convert to PIL
                 img = TF.to_pil_image(img_tensor.cpu().float().clamp(0, 1))
                 img.save(save_path)
 '''
@@ -252,7 +252,7 @@ for epoch in range(1, args.epochs + 1):
         writer = csv.writer(csvfile)
         writer.writerow(["font_name", "true_label", "total", "predicted_as_1", "predicted_as_0", "always_wrong"])
         for font, stat in font_stats.items():
-            # 所有预测都是1 或 都是0，且预测结果全错，才算 always wrong
+            # All predictions are 1 or 0，and predictions are all wrong，can be called always wrong
             always_wrong = int(
                 (stat['pred1'] == stat['total'] and stat['true'] == 0) or
                 (stat['pred0'] == stat['total'] and stat['true'] == 1)
@@ -264,25 +264,25 @@ for epoch in range(1, args.epochs + 1):
 
     all_probs_np = np.array(all_probs)
     print(f"📊 Probabilities - Min: {all_probs_np.min():.4f} | Max: {all_probs_np.max():.4f} | Mean: {all_probs_np.mean():.4f}")
-    print(f"✅ Epoch {epoch} | Train Loss: {avg_train_loss:.4f} | Valid Loss: {avg_valid_loss:.4f} | Valid Acc: {valid_acc:.4f}")
+    print(f"✅ Epoch {epoch} | Train Loss: {avg_train_loss:.4f} | Test Loss: {avg_valid_loss:.4f} | Test Acc: {valid_acc:.4f}")
 
     if epoch <= args.warmup_epochs:
         warmup_progress = epoch / args.warmup_epochs
         warmup_lr = args.warmup_start_lr + (args.lr - args.warmup_start_lr) * warmup_progress
         for param_group in optimizer.param_groups:
             param_group['lr'] = warmup_lr
-        print(f"🌟 Warmup阶段，学习率调整为: {warmup_lr:.6f}")
+        print(f"🌟 Warmup，Lr adjusted to: {warmup_lr:.6f}")
     else:
         cosine_scheduler.step()
 
     if avg_valid_loss < best_valid_loss:
         best_valid_loss = avg_valid_loss
         torch.save(model.state_dict(), f"checkpoints/{args.tag}_best.pth")
-        print(f"✅ 保存当前最优模型到: checkpoints/{args.tag}_best.pth")
+        print(f"✅ Save the best model to: checkpoints/{args.tag}_best.pth")
 
     if epoch % 10 == 0:
         torch.save(model.state_dict(), f"checkpoints/{args.tag}_epoch{epoch}.pth")
-        print(f"📦 保存模型到: checkpoints/{args.tag}_epoch{epoch}.pth")
+        print(f"📦 Save model to: checkpoints/{args.tag}_epoch{epoch}.pth")
 
     cm = confusion_matrix(all_labels, all_preds)
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=[0, 1])
@@ -291,6 +291,6 @@ for epoch in range(1, args.epochs + 1):
     plt.savefig(f"checkpoints/confmat_epoch{epoch}.png")
     plt.close()
 
-print("🏁 训练结束!")
+print("🏁 Train ending!")
 torch.save(model.state_dict(), f"checkpoints/{args.tag}_final.pth")
-print(f"✅ 最终模型保存到: checkpoints/{args.tag}_final.pth")
+print(f"✅ Final model saved to: checkpoints/{args.tag}_final.pth")
