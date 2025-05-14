@@ -19,5 +19,6 @@ The task is to train a binary classifier to detect whether a font matches a spec
 ## How to start training
 - `python train_multimgv4.py --tag decorative --model efficientnet --loss asl --letters 4 --repeat 4 --epochs 60
 - You can change the tag to others like condense, animate, etc., via the --tag argument.
+- 💡 If the dataset is highly imbalanced, you can adjust the gamma_neg parameter in the ASL loss function (e.g., set gamma_neg=1.5) to improve robustness against dominant negative samples.
 
 
