@@ -21,4 +21,6 @@ The task is to train a binary classifier to detect whether a font matches a spec
 - You can change the tag to others like condense, animate, etc., via the --tag argument.
 - 💡 If the dataset is highly imbalanced, you can adjust the gamma_neg parameter in the ASL loss function (e.g., set gamma_neg=1.5) to improve robustness against dominant negative samples.
 
+## A Dockerfile for fully reproducible setup is also being planned.
+
 
