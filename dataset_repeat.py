@@ -10,6 +10,7 @@ import torch
 from torch.utils.data import Dataset
 import torchvision.transforms as T
 
+
 __all__ = [
     "SingleLetterFontDataset",
     "MultiLetterFontDataset",
