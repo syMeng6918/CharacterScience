@@ -16,7 +16,6 @@ class SimpleFontDataset(Dataset):
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,))
         ])
-
         self.font2label = {}
         grouped = self.df.groupby("fontName")
         for font_name, group in grouped:
