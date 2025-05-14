@@ -1,6 +1,6 @@
 """
-データセットのフォントとタグの情報をcsvにまとめる
-データセットのフォント画像を入力用に前処理する
+CSV output
+Image preprocess
 """
 
 from pathlib import Path
@@ -9,7 +9,7 @@ from PIL import Image, ImageOps
 from tensorflow.keras.utils import load_img
 from tqdm import tqdm
 
-# alphabetのリスト
+# alphabet list
 alphLower = [chr(i) for i in range(97, 97 + 26)]
 alphUpper = [chr(i) * 2 for i in range(65, 65 + 26)]
 
@@ -64,12 +64,12 @@ def preprocess_fontimage(fontImage_path, resultImage_path):
         for alph in alphUpper + alphLower:
             img_path = fontImage_path / "{}_{}.png".format(fontName, alph)
             if not img_path.exists():
-                continue  # 如果图片不存在，跳过
+                continue  # if this image doesn't exist， continue.
             try:
                 img = load_img(str(img_path))
             except Exception as e:
                 print(f"Warning: failed to load {img_path}: {e}")
-                continue  # 如果图片损坏，跳过
+                continue  # if image break down, continue.
 
             img = ImageOps.invert(img)
             img = cropImage(img)
@@ -79,11 +79,8 @@ def preprocess_fontimage(fontImage_path, resultImage_path):
 
 
 if __name__ == "__main__":
-
-    # フォント名とタグをfontName_tagWord.csvにまとめる
+    #make csv from fontlabel
     # collect_fontName_tagWord(fontTag_path=Path("dataset").resolve() / "taglabel")
-
-    # 入力用画像を作成
     preprocess_fontimage(
         fontImage_path=Path("dataset").resolve() / "fontimage",
         resultImage_path=Path("dataset").resolve() / "fontimage_preprocessed_reference"
