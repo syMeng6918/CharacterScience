@@ -1,6 +1,9 @@
 This repository contains code used for the Newcomers' Assignment in the Intelligent Media Processing Lab.  
 The task is to train a binary classifier to detect whether a font matches a specific impression tag (e.g., "decorative", "condense").
 
+## Environment(Temporary)
+- Please use the Dockerfile to build the environment.
+ 
 ## Main Files
 
 - `train_multimgv4.py`: Main training script. Supports command-line arguments such as model type, loss function, target tag, and number of letters.
@@ -21,7 +24,5 @@ The task is to train a binary classifier to detect whether a font matches a spec
 - You can change the tag to others like condense, animate, etc., via the --tag argument.
 - 💡 If the dataset is highly imbalanced, you can adjust the gamma_neg parameter in the ASL loss function (e.g., set gamma_neg=1.5) to improve robustness against dominant negative samples.
 
-## Environment(Temporary)
-- Please use the Dockerfile to build the environment.
 
 
