@@ -3,6 +3,8 @@ The task is to train a binary classifier to detect whether a font matches a spec
 
 ## Environment(Temporary)
 - Please use the Dockerfile to build the environment.
+- docker build -t font-trainer . 
+- sudo docker run --shm-size=8g --gpus all -it -v $(pwd):/workspace font-trainer
  
 ## Main Files
 
